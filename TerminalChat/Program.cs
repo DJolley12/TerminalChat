@@ -46,41 +46,44 @@ namespace TerminalChat
             // Task.Run(() => listener.Listen());
             // Task.Run(() => clientHandler.ProcessOutgoing());
             // Task.Run(() => clientHandler.ProcessIncoming());
-            listener.Listen();
-            clientHandler.ProcessOutgoing();
-            clientHandler.ProcessIncoming();
+            
+            /* listener.Listen(); */
+            /* clientHandler.ProcessOutgoing(); */
+            /* clientHandler.ProcessIncoming(); */
             var notConnected = true;
             var firstUsed = false;
-            while (notConnected)
-            {
-                try 
-                {
-                    if (!firstUsed)
-                    {
-                        client.Connect(IPAddress.Parse("127.0.0.1"), 5001);
-                        firstUsed = true;
-                        notConnected = false;
-                        ClientHandler.Instance.Clients.Add(client);
-                    }
-                    /* else */ 
-                    /* { */
-                    /*     client.Connect(IPAddress.Parse("127.0.0.1"), 5001); */
-                    /* } */
-                }
-                catch (Exception ex)
-                {
-                    var excep = ex.Message;
-                }
-            }
+            mainView.ReadInput();
 
-            while (loop)
-            {
-                Console.Write("Message: ");
-                var outgoingMessage = Console.ReadLine();
-                clientHandler.Clients.First().QueueOutgoingMessage(outgoingMessage);
-                // Task.Run(() => clientHandler.ProcessOutgoing());
-                Console.WriteLine($"Message {outgoingMessage} added");
-            }
+            /* while (notConnected) */
+            /* { */
+            /*     try */ 
+            /*     { */
+            /*         if (!firstUsed) */
+            /*         { */
+            /*             /1* client.Connect(IPAddress.Parse("127.0.0.1"), 5001); *1/ */
+            /*             /1* firstUsed = true; *1/ */
+            /*             /1* notConnected = false; *1/ */
+            /*             /1* ClientHandler.Instance.Clients.Add(client); *1/ */
+            /*         } */
+            /*         /1* else *1/ */ 
+            /*         /1* { *1/ */
+            /*         /1*     client.Connect(IPAddress.Parse("127.0.0.1"), 5001); *1/ */
+            /*         /1* } *1/ */
+            /*     } */
+            /*     catch (Exception ex) */
+            /*     { */
+            /*         var excep = ex.Message; */
+            /*     } */
+            /* } */
+
+            /* while (loop) */
+            /* { */
+            /*     Console.Write("Message: "); */
+            /*     var outgoingMessage = Console.ReadLine(); */
+            /*     clientHandler.Clients.First().QueueOutgoingMessage(outgoingMessage); */
+            /*     // Task.Run(() => clientHandler.ProcessOutgoing()); */
+            /*     Console.WriteLine($"Message {outgoingMessage} added"); */
+            /* } */
 
             listener.Stop();
         }
