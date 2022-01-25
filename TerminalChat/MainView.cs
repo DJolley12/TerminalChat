@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
+using LINQHelpers;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 
@@ -9,16 +10,25 @@ namespace TerminalChat
     internal class MainView
     {
         private readonly IConfiguration _config;
-        private List<string> friendsList = new List<string>{ "Jerry", "David", "CommanderYeetBus69" }; 
-        private string selectedFriend = "Jerry"; 
-        private int selectedIndex = 0;
+        private List<string> friendsList { get; set; } 
+        private List<string> mainOptions { get; set; }
+        private string selectedItem { get; set; } 
+        private int currIndex { get; set; }
 
         internal MainView(IConfiguration config)
         {
             _config = config;
+            friendsList = _config.GetSection("SavedContacts").AsEnumerable().TakeValues<string>().ToList();
+            currIndex = 0;
+            ShowMainView();
         }
 
+        internal void ShowMainView()
+        {
+            mainOptions = new List<string>{ "Contacts", "Configuration", "Start New Chat" };
+            selectedItem = mainOptions[currIndex];
 
+        }
 
         internal void ShowChat()
         {
@@ -27,7 +37,7 @@ namespace TerminalChat
             chatViewTable.AddColumn("Friends");
             foreach (var friend in friendsList)
             {
-                if (friend == selectedFriend)
+                if (friend == selectedItem)
                 {
                     chatViewTable.AddRow($"[cyan1 bold]{friend}[/]");
                 }
@@ -52,24 +62,21 @@ namespace TerminalChat
             AnsiConsole.Write(chatViewTable);
         }
 
-        public void ReadInput()
+        public void ReadInput(Action Refresh, List<string> options, string selectedOption, int selIndex)
         {
-            while (true)
+            Refresh();
+            var input = Console.ReadKey();
+
+            if (input.Key == ConsoleKey.J)
             {
-                ShowChat();
-                var input = Console.ReadKey();
-
-                if (input.Key == ConsoleKey.J)
-                {
-                    selectedIndex = selectedIndex + 1 == friendsList.Count ? selectedIndex : selectedIndex + 1;
-                }
-                else if (input.Key == ConsoleKey.K)
-                {
-                    selectedIndex = selectedIndex == 0 ? selectedIndex : selectedIndex - 1;
-                }
-
-                selectedFriend = friendsList[selectedIndex];
+                selIndex = selIndex + 1 == options.Count ? selIndex : selIndex + 1;
             }
+            else if (input.Key == ConsoleKey.K)
+            {
+                selIndex = selIndex == 0 ? selIndex : selIndex - 1;
+            }
+
+            selectedOption = options[selIndex];
         }
     }
 }
